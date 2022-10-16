@@ -1,56 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { legacy_createStore } from 'redux';
+import { legacy_createStore, bindActionCreators } from 'redux';
 import './index.css';
-
-const initialState = {value: 0};
-
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "INC":
-      return {
-        ...state,
-        value: state.value + 1
-      };
-    case "DEC":
-      return {
-        ...state,
-        value: state.value - 1
-      };
-    case "RND":
-      return {
-        ...state,
-        value: state.value * action.payload
-      };
-    default:
-      return state;
-  }
-}
+import { reducer } from './reducer';
+import * as actions from './action';
 
 const store = legacy_createStore(reducer)
 
-const inc = () => ({type: "INC"})
-const dec = () => ({type: "DEC"})
-const rnd = (value) => ({type: "RND", payload: value})
+const { dispatch, subscribe, getState } = store
 
-document.querySelector('#inc').addEventListener('click', () => {
-  store.dispatch(inc());
-});
+// const bindActionCreator = (creator, dispatch) => (...args) => {
+//   dispatch(creator(...args))
+// }
 
-document.querySelector('#dec').addEventListener('click', () => {
-  store.dispatch(dec());
-});
+const { inc, dec, rnd } = bindActionCreators(actions, dispatch)
 
+document.querySelector('#inc').addEventListener('click', inc);
+document.querySelector('#dec').addEventListener('click', dec);
 document.querySelector('#rnd').addEventListener('click', () => {
   const value = Math.floor(Math.random() * 10);
-  store.dispatch(rnd(value));
+  rnd(value);
 });
 
 const update = () => {
-  document.querySelector('#counter').textContent = store.getState().value
+  document.querySelector('#counter').textContent = getState().value
 }
 
-store.subscribe(update)
+subscribe(update)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
