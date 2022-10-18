@@ -1,3 +1,6 @@
+import { connect } from "react-redux";
+import * as actions from '../action'
+
 const Counter = ({counter, inc, dec, rnd}) => {
     return (
         <div class="jumbotron">
@@ -9,4 +12,11 @@ const Counter = ({counter, inc, dec, rnd}) => {
     );
 };
 
-export default Counter;
+const mapStateToProps = (state) => {
+    return {
+        counter: state.value
+    }
+}
+
+//Эта функция автоматически оборачивает actions в bindactionscreator и возвращает объект пропсов
+export default connect(mapStateToProps, actions)(Counter);
